@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-dialog { max-width: 500px; margin: auto; }
+        .modal-content { background-color: #fefefe; padding: 20px; border-radius: 5px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: #f44336; cursor: pointer; }
+        .cancelbtn, .deletebtn { padding: 10px; border: none; cursor: pointer; width: 48%; }
+        .cancelbtn { background-color: #ccc; color: black; }
+        .deletebtn { background-color: #f44336; color: white; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .closet-container { margin-bottom: 80px; }
+    </style>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4">
+            <h1 class="text-2xl font-semibold">SmartStyler</h1>
+            {% for hello in hello %}
+                <h1><b><u>Welcome to Your Smart Wardrobe, {{hello['email']}}!</b></u></h1>
+            {% endfor %}
+        </div>
+
+        <!-- Profile and Sign Up -->
+        <div class="flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <span>Kolhapur</span>
+            </div>
+            <a href="/logout" class="bg-black text-white px-4 py-2 rounded">Logout</a>
+        </div>
+
+        <!-- OOTD Calendar -->
+        <div class="px-4 py-2">
+            <a class="text-blue-500" href="login/ootd">Schedule Outfits &gt;</a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-around border-b">
+            <div class="py-2 text-gray-500 " ><a href="/color_palette" ><a href="/login/closet">Closet </a></div>
+            <!-- <div class="py-2 text-gray-500"><a href="/recommend_outfits_by_occasion">Recommendation Occasionally</a> </div> -->
+            <div class="py-2 text-gray-500 border-b-2 border-black" ><a href="/color_palette" ><a href="/design_outfits">Create Outfits </a></div>
+            <div class="py-2 text-gray-500" ><a href="/skin_tone">Skin Tone Analysis</a></div>
+
+            <div class="py-2 text-gray-500 ">Color Palette Suggestions</a></div>
+            <div class="py-2 text-gray-500" ><a href="/recommend_outfits_new">Get Recommendation</a></div>
+        </div>
+
+<br>
+<br>
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #closet {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .clothing-item {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            cursor: grab;
+        }
+        #outfit-canvas {
+            width: 400px;
+            height: 500px;
+            border: 2px dashed #aaa;
+            margin: auto;
+            position: relative;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+        .canvas-item {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            cursor: grab;
+        }
+        #options-menu {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        }
+        #options-menu button, #save-outfit {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+       <b> <div class="py-2 text-gray-500"><a href="/see_design_outfits">My Outfits</a></div></b>
+
+    
+    <h2>Create Your Outfit</h2>
+    <input type="file" id="imageUpload" accept="image/*" multiple>
+    <div id="closet"></div>
+    <h3>Drag and Drop Items Here</h3>
+    <div id="outfit-canvas"></div>
+    <b><button id="save-outfit" onclick="saveOutfit()">Save Outfit</button></b>
+    <div id="options-menu">
+        <button onclick="deleteItem()">Delete</button>
+        <button onclick="replaceItem()">Replace</button>
+    </div>
+
+    <script>
+        let selectedItem = null;
+        let isDragging = false;
+        const imageUpload = document.getElementById("imageUpload");
+        const closet = document.getElementById("closet");
+        const outfitCanvas = document.getElementById("outfit-canvas");
+        const optionsMenu = document.getElementById("options-menu");
+        let usedImages = new Set();
+
+        imageUpload.addEventListener("change", function(event) {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("clothing-item");
+                    img.draggable = true;
+                    img.addEventListener("dragstart", dragStart);
+                    closet.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function dragStart(event) {
+            event.dataTransfer.setData("text/plain", event.target.src);
+        }
+
+        outfitCanvas.addEventListener("dragover", function(event) {
+            event.preventDefault();
+        });
+
+        outfitCanvas.addEventListener("drop", function(event) {
+            event.preventDefault();
+            const src = event.dataTransfer.getData("text/plain");
+            
+            if (usedImages.has(src)) {
+                alert("This image is already added to the outfit!");
+                return;
+            }
+            
+            const img = document.createElement("img");
+            img.src = src;
+            img.classList.add("canvas-item");
+            
+            let x = event.offsetX;
+            let y = event.offsetY;
+            
+            img.style.left = x + "px";
+            img.style.top = y + "px";
+            img.addEventListener("mousedown", startDrag);
+            img.addEventListener("click", showOptions);
+            outfitCanvas.appendChild(img);
+            
+            usedImages.add(src);
+        });
+
+        function showOptions(event) {
+            event.stopPropagation();
+            selectedItem = event.target;
+            optionsMenu.style.display = "block";
+            optionsMenu.style.left = event.pageX + "px";
+            optionsMenu.style.top = event.pageY + "px";
+        }
+
+        function deleteItem() {
+            if (selectedItem) {
+                usedImages.delete(selectedItem.src);
+                selectedItem.remove();
+                optionsMenu.style.display = "none";
+            }
+        }
+
+        function replaceItem() {
+            if (selectedItem) {
+                imageUpload.click();
+                imageUpload.onchange = function(event) {
+                    const file = event.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        usedImages.delete(selectedItem.src);
+                        selectedItem.src = e.target.result;
+                        usedImages.add(selectedItem.src);
+                        optionsMenu.style.display = "none";
+                    };
+                    reader.readAsDataURL(file);
+                };
+            }
+        }
+
+        function startDrag(event) {
+            selectedItem = event.target;
+            isDragging = true;
+            optionsMenu.style.display = "none"; 
+            let offsetX = event.clientX - selectedItem.offsetLeft;
+            let offsetY = event.clientY - selectedItem.offsetTop;
+            
+            document.onmousemove = function(e) {
+                if (isDragging) {
+                    let newX = e.clientX - offsetX;
+                    let newY = e.clientY - offsetY;
+                    
+                    selectedItem.style.left = newX + "px";
+                    selectedItem.style.top = newY + "px";
+                }
+            };
+        }
+
+        document.onmouseup = function() {
+            isDragging = false;
+        };
+
+        outfitCanvas.addEventListener("click", function(event) {
+            if (!event.target.classList.contains("canvas-item")) {
+                optionsMenu.style.display = "none";
+            }
+        });
+
+        function saveOutfit() {
+            html2canvas(outfitCanvas).then(canvas => {
+                canvas.toBlob(blob => {
+                    let formData = new FormData();
+                    formData.append("outfit_image", blob, "outfit.png");
+
+                    fetch("/save_outfits", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert("Outfit saved successfully!");
+                            window.location.href = data.redirect_url;
+                        } else {
+                            alert("Error saving outfit: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                }, "image/png");
+            });
+        }
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+</html>

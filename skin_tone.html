@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Tone Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-dialog { max-width: 500px; margin: auto; }
+        .modal-content { background-color: #fefefe; padding: 20px; border-radius: 5px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: #f44336; cursor: pointer; }
+        .cancelbtn, .deletebtn { padding: 10px; border: none; cursor: pointer; width: 48%; }
+        .cancelbtn { background-color: #ccc; color: black; }
+        .deletebtn { background-color: #f44336; color: white; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .closet-container { margin-bottom: 80px; }
+    </style>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4">
+            <h1 class="text-2xl font-semibold">SmartStyler</h1>
+            {% for hello in hello %}
+                <h1><b><u>Welcome to Your Smart Wardrobe, {{hello['email']}}!</b></u></h1>
+            {% endfor %}
+        </div>
+
+        <!-- Profile and Sign Up -->
+        <div class="flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <span>Kolhapur</span>
+            </div>
+            <a href="/logout" class="bg-black text-white px-4 py-2 rounded">Logout</a>
+        </div>
+
+        <!-- OOTD Calendar -->
+        <div class="px-4 py-2">
+            <a class="text-blue-500" href="login/ootd">Schedule Outfits &gt;</a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-around border-b">
+            <div class="py-2 text-gray-500 " ><a href="/color_palette" ><a href="/login/closet">Closet </a></div>
+            <!-- <div class="py-2 text-gray-500"><a href="/recommend_outfits_by_occasion">Recommendation Occasionally</a> </div> -->
+            <div class="py-2 text-gray-500 " ><a href="/design_outfits">Create Outfits </a></div>
+            <div class="py-2 text-gray-500 border-b-2 border-black" ><a href="/skin_tone">Skin Tone Analysis</a></div>
+
+            <div class="py-2 text-gray-500 " ><a href="/color_palette">Color Palette Suggestions</a></div>
+            <div class="py-2 text-gray-500" ><a href="/recommend_outfits_new">Get Recommendation</a></div>
+        </div>
+
+<br>
+<br>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            height: 100vh;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #333;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .upload-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .upload-btn:hover {
+            background-color: #0056b3;
+        }
+        #preview {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .analyze-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .analyze-btn:hover {
+            background-color: #218838;
+        }
+        #result, #suggestions {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #suggestions {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="login/closet">
+    <input type="submit" value="Back" style="font-size: 18px; padding: 2px 5px; width: 60px;">
+</a><br><br>
+        <b><h1>Skin Tone Analysis</h1><br></b>
+        <label for="imageUpload" class="upload-btn">Choose Image</label>
+        <input type="file" id="imageUpload" accept="image/*">
+        <br>
+        <img id="preview" src="" alt="Image Preview">
+        <br>
+        <button class="analyze-btn" onclick="analyzeSkinTone()">Analyze Skin Tone</button>
+        <p id="result"></p>
+        <div id="suggestions">
+            <h3>Recommended Colors:</h3>
+            <p id="colors"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("preview").src = e.target.result;
+                    document.getElementById("preview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function analyzeSkinTone() {
+            let file = document.getElementById("imageUpload").files[0];
+            if (!file) {
+                alert("Please upload an image first.");
+                return;
+            }
+            
+            let formData = new FormData();
+            formData.append("image", file);
+
+            fetch("/analyze_skin_tone", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = "Detected Skin Tone: " + data.skin_tone;
+                document.getElementById("suggestions").style.display = "block";
+                document.getElementById("colors").innerText = data.suggested_colors.join(", ");
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>

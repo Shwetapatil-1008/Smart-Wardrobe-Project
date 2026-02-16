@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Outfits</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-dialog { max-width: 500px; margin: auto; }
+        .modal-content { background-color: #fefefe; padding: 20px; border-radius: 5px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: #f44336; cursor: pointer; }
+        .cancelbtn, .deletebtn { padding: 10px; border: none; cursor: pointer; width: 48%; }
+        .cancelbtn { background-color: #ccc; color: black; }
+        .deletebtn { background-color: #f44336; color: white; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .closet-container { margin-bottom: 80px; }
+    </style>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4">
+            <h1 class="text-2xl font-semibold">SmartStyler</h1>
+            {% for hello in hello %}
+                <h1><b><u>Welcome to Your Smart Wardrobe, {{hello['email']}}!</b></u></h1>
+            {% endfor %}
+        </div>
+
+        <!-- Profile and Sign Up -->
+        <div class="flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <span>Kolhapur</span>
+            </div>
+            <a href="/logout" class="bg-black text-white px-4 py-2 rounded">Logout</a>
+        </div>
+
+        <!-- OOTD Calendar -->
+        <div class="px-4 py-2">
+            <a class="text-blue-500" href="login/ootd">Schedule Outfits &gt;</a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-around border-b">
+            <div class="py-2 text-gray-500 " ><a href="/color_palette" ><a href="/login/closet">Closet </a></div>
+            <!-- <div class="py-2 text-gray-500"><a href="/recommend_outfits_by_occasion">Recommendation Occasionally</a> </div> -->
+            <div class="py-2 text-gray-500 border-b-2 border-black" ><a href="/color_palette" ><a href="/design_outfits">Create Outfits </a></div>
+            <div class="py-2 text-gray-500" ><a href="/skin_tone">Skin Tone Analysis</a></div>
+
+            <div class="py-2 text-gray-500 ">Color Palette Suggestions</a></div>
+            <div class="py-2 text-gray-500" ><a href="/recommend_outfits_new">Get Recommendation</a></div>
+        </div>
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="container mt-5">
+
+        <center><a href="login/closet">
+    <b><input type="submit" value="Back"  style="font-size: 18px; padding: 20px 5px; width: 60px; color: black;"></b></a></center>
+
+        <h2 class="text-center mb-4">Your Created Outfits</h2>
+        <div class="row">
+            {% for outfit in outfits %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename=outfit.image_path.replace('static/', '').replace('\\', '/')) }}" 
+     alt="Clothes Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+
+
+                        <div class="card-body text-center">
+                            <p><strong>Created At:</strong> {{ outfit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                            
+                            <!-- Edit Button -->
+                            <!-- <button class="btn btn-warning" data-toggle="modal" data-target="#editModal{{ outfit.id }}">Edit</button>
+ -->                            
+                            <!-- Delete Form -->
+                            <form method="POST" action="{{ url_for('delete_design_outfits', outfit_id=outfit.id) }}" class="d-inline" onsubmit="return confirmDelete(event, this);">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            {% endfor %}
+        </div>
+        
+        {% if not outfits %}
+            <div class="alert alert-info text-center">
+                No outfits found. <a href="{{ url_for('design_outfits') }}" class="btn btn-primary mt-2">Create One</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function confirmDelete(event, form) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

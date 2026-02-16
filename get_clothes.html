@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothes in Closet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-dialog { max-width: 500px; margin: auto; }
+        .modal-content { background-color: #fefefe; padding: 20px; border-radius: 5px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: #f44336; cursor: pointer; }
+        .cancelbtn, .deletebtn { padding: 10px; border: none; cursor: pointer; width: 48%; }
+        .cancelbtn { background-color: #ccc; color: black; }
+        .deletebtn { background-color: #f44336; color: white; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .closet-container { margin-bottom: 80px; }
+    </style>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4">
+            <h1 class="text-2xl font-semibold">SmartStyler</h1>
+            {% for hello in hello %}
+                <h1><b><u>Welcome to Your Smart Wardrobe, {{hello['email']}}!</b></u></h1>
+            {% endfor %}
+        </div>
+
+        <!-- Profile and Sign Up -->
+        <div class="flex items-center justify-between px-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <span>Kolhapur</span>
+            </div>
+            <a href="/logout" class="bg-black text-white px-4 py-2 rounded">Logout</a>
+        </div>
+
+        <!-- OOTD Calendar -->
+        <div class="px-4 py-2">
+            <a class="text-blue-500 " href="login/ootd">Schedule Outfits &gt;</a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-around border-b">
+            <div class="py-2 text-gray-500 border-b-2 border-black" ><a href="/color_palette" ><a href="/login/closet">Closet </a></div>
+            <!-- <div class="py-2 text-gray-500"><a href="/recommend_outfits_by_occasion">Recommendation Occasionally</a> </div> -->
+            <div class="py-2 text-gray-500 " ><a href="/design_outfits">Create Outfits </a></div>
+            <div class="py-2 text-gray-500" ><a href="/skin_tone">Skin Tone Analysis</a></div>
+
+            <div class="py-2 text-gray-500 " ><a href="/color_palette">Color Palette Suggestions</a></div>
+            <div class="py-2 text-gray-500 " ><a href="/recommend_outfits_new">Get Recommendation</a></div>
+        </div>
+
+<br>
+<br>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-white text-black">
+    <!-- <a href="closet">
+    <input type="submit" value="Back" style="font-size: 18px; padding: 2px 5px; width: 60px;">
+</a> -->
+    {% if clothes %}
+    <!-- Clothes Display -->
+    
+        <h2 class="my-4">Clothes in This Closet</h2>
+        
+        <div class="row">
+            {% for cloth in clothes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='uploads/clothes/' + (cloth.image_url if cloth.image_url else 'default-closet.png')) }}" 
+                             alt="Clothes Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <p class="card-text">Category: {{ cloth.category if cloth.category else 'None'}} </p>
+                            <p class="card-text">Material:  {{ cloth.material if cloth.material else 'None'}}</p>
+
+                            <!-- Display the most recent worn date -->
+                            <p class="card-text">Most Recent Worn Date: {{ cloth.recent_date if cloth.recent_date else 'None' }} {{ cloth.outfit_name }}</p>
+
+                            <!-- Button to show all worn dates -->
+                            <button class="btn btn-info" data-toggle="modal" data-target="#wornDatesModal{{ cloth.id }}">View Worn Details</button>
+
+                            <!-- Modal for displaying all worn dates -->
+                            <div class="modal fade" id="wornDatesModal{{ cloth.id }}" tabindex="-1" role="dialog" aria-labelledby="wornDatesModalLabel{{ cloth.id }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="wornDatesModalLabel{{ cloth.id }}">Worn Dates : </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <ul>
+                                                 {% for date, outfit_name in cloth.outfit_dates %}
+                        <li>{{ date.strftime('%Y-%m-%d') }} : {{ outfit_name }}</li>  <!-- Display date and corresponding outfit name -->
+                    {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Edit Cloth Button -->
+<!-- Edit Cloth Button -->
+<button class="btn btn-warning" data-toggle="modal" data-target="#editClothModal{{ cloth.id }}">Edit</button>
+
+<!-- Edit Cloth Modal -->
+<div class="modal fade" id="editClothModal{{ cloth.id }}" tabindex="-1" role="dialog" aria-labelledby="editClothModalLabel{{ cloth.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editClothModalLabel{{ cloth.id }}">Edit Cloth</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ url_for('edit_cloth', clothes_id=cloth.id) }}" enctype="multipart/form-data">
+                <input type="hidden" name="_method" value="PUT">  <!-- Add this to support PUT method -->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="season">Season :</label>
+                        <input type="text" class="form-control" name="season" value="{{ cloth.season }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="occasions">Occasions :</label>
+                        <input type="text" class="form-control" name="occasions" value="{{ cloth.occasions }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color :</label>
+                        <input type="text" class="form-control" name="color" value="{{ cloth.color }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand :</label>
+                        <input type="text" class="form-control" name="brand" value="{{ cloth.brand }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="material">Material:</label>
+                        <input type="text" class="form-control" name="material" value="{{ cloth.material }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category :</label>
+                        <input type="text" class="form-control" name="category" value="{{ cloth.category }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase_info">Purchase Info :</label>
+                        <input type="text" class="form-control" name="purchase_info" value="{{ cloth.purchase_info }}">
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Cloth Form -->
+
+
+
+                            <form method="POST" action="{{ url_for('delete_cloth', clothes_id=cloth.id) }}" class="mt-2" onsubmit="return confirmDelete(event, this);">
+                                <input type="hidden" name="closet_id" value="{{ closet_id }}">
+                                <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete this cloth">Delete</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <!-- No Clothes Available -->
+    <div class="alert alert-info" role="alert">
+        No clothes available in this closet. Consider adding some!
+        <a href="{{ url_for('add_clothes', closet_id=closet_id) }}" class="btn btn-primary mt-2">Add Clothes</a>
+    </div>
+    {% endif %}
+
+    <script>
+        // SweetAlert confirmation on delete
+        function confirmDelete(event, form) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submit the form if confirmed
+                }
+            });
+        }
+
+        // Enable Bootstrap tooltips (if you want to show tooltips on buttons)
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

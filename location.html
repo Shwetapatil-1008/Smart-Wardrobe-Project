@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Location</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Your Location Information</h1>
+    <button id="getLocationBtn">Get Location</button>
+    <div id="locationData"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#getLocationBtn').click(function() {
+                $.get('/get_ip_location', function(data) {
+                    let locationInfo = `
+                        <p>City: ${data.city}</p>
+                        <p>Region: ${data.region}</p>
+                        <p>Country: ${data.country}</p>
+                        <p>Location: ${data.location}</p>
+                        <p>Organization: ${data.org}</p>
+                    `;
+                    $('#locationData').html(locationInfo);
+                }).fail(function() {
+                    $('#locationData').html('<p>Error retrieving location data.</p>');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

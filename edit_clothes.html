@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+
+<form action="{{ url_for('edit_clothes', closet_id=cloth['closet_id'], cloth_id=cloth['id']) }}" method="POST">
+    <label for="color">Color</label>
+    <input type="text" name="color" value="{{ cloth['color'] }}" required>
+
+    <label for="material">Material</label>
+    <input type="text" name="material" value="{{ cloth['material'] }}" required>
+
+    <label for="season">Season</label>
+    <input type="text" name="season" value="{{ cloth['season'] }}" required>
+
+    <label for="image_url">Image URL</label>
+    <input type="text" name="image_url" value="{{ cloth['image_url'] }}">
+
+    <button type="submit">Save Changes</button>
+</form>
+</body>
+</html>

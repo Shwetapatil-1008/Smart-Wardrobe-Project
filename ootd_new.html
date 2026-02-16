@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Outfit of the Day Calendar</title>
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/toastr/toastr.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/sweetalert/sweetalert.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/calendar/fullcalendar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='event/assets/css/lib/style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='event/assets/js/lib/sweetalert/sweetalert.min.js') }}"></script>
+</head>
+
+<body>
+
+<div class="content-wrap">
+    <div class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-8 p-r-0 title-margin-right">
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h1>Hello, <span>Welcome to Outfit Calendar</span></h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 p-l-0 title-margin-left">
+                    <div class="page-header">
+                        <div class="page-title">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active"><a href="closet">
+    <input type="submit" value="Back To Home" style="font-size: 18px; padding: 2px 5px; width: 150px;">
+</a></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="main-content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-title">
+                                <h4>Calendar</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <a href="#" data-toggle="modal" data-target="#event-modal" class="btn btn-lg btn-success btn-block waves-effect waves-light">
+                                            <i class="fa fa-plus"></i> Plan Today's Outfit
+                                        </a>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="card-box">
+                                            <div id="calendar"></div>
+                                            <div class="stats">
+    <h5>OOTD Count: <span id="ootd-count">{{ outfits|length }}</span></h5>
+    <h5>Most Worn Outfit:</h5>
+<div id="most-worn-outfit">
+    <span id="most-worn-name">{{ most_worn_outfit.name or "None" }} Count: {{ most_worn_outfit.count or "None" }}</span>
+    <img id="most-worn-img" src="{{ url_for('static', filename='uploads/wornClothes/' + (most_worn_outfit.image_url or 'default-image.png')) }}" alt="" style="display: {% if most_worn_outfit.image_url %}block{% else %}none{% endif %}; width: 50px; height: auto; margin-left: 10px;">
+</div>
+</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade none-border" id="event-modal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title"><strong>Add Today's Outfit</strong></h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="outfitForm" method="POST" action="{{ url_for('ootd') }}">
+                                                        <div class="form-group">
+                                                            <input type="text" name="outfitName" placeholder="Description" required>
+                                                            <input type="date" name="date" id="dateInput" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="closetSelect">Select Closet:</label>
+                                                            <select id="closetSelect" name="closet_id" class="form-control" required>
+                                                                <option value="">-- Select a Closet --</option>
+                                                                {% for closet in closets %}
+                                                                    <option value="{{ closet.id }}">{{ closet.name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div id="clothesSelection" style="display: none;">
+                                                            {% if clothes %}
+                                                            <h3>Clothes:</h3>
+                                                            
+                                                            <div id="clothesList" class="row">
+                                                                <!-- Clothes will be populated here based on selected closet -->
+                                                            </div>
+                                                           
+                                        {% endif %}
+                                                        </div>
+                                                        <div id="selectedClothesPreview" style="margin-top: 20px;">
+                                                            <h4>Selected Clothes:</h4>
+                                                            <div id="selectedClothesImages" class="row">
+                                                                <!-- Selected clothes images will be displayed here -->
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-success save-event waves-effect waves-light">Plan Outfit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='event/assets/js/lib/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='event/assets/js/lib/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='event/assets/js/lib/moment/moment.js') }}"></script>
+<script src="{{ url_for('static', filename='event/assets/js/lib/calendar/fullcalendar.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize calendar
+        var calendar = $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            editable: true,
+            droppable: true,
+            events: [],
+            eventRender: function(event, element) {
+                if (event.url) {
+                    element.find('.fc-title').append("<br/><img src='" + event.url + "' style='width:30px;height:30px;'>");
+                }
+            },
+            eventClick: function(event) {
+                $('#outfitName').val(event.title);
+                $('#imagePreview').attr('src', event.url).show();
+                currentEvent = event;
+                $('.delete-event').show();
+                $('#event-modal').modal('show');
+            },
+            eventReceive: function(event) {
+                if ($('#drop-remove').is(':checked')) {
+                    $(this).remove();
+                }
+            }
+        });
+        // Load existing outfits into the calendar
+        {% for outfit in outfits %}
+            calendar.fullCalendar('renderEvent', {
+                title: '{{ outfit.outfit_name }}',
+                start: '{{ outfit.date }}',
+                url: '{{ url_for("static", filename="uploads/wornClothes/" + outfit.outfit_image.split(",")[0]) }}', // Use the first image for the event
+                allDay: true
+            }, true);
+        {% endfor %}
+
+        $('#event-modal').on('show.bs.modal', function() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            $('#dateInput').val(today);
+        });
+
+        // Handle closet selection
+        $('#closetSelect').change(function() {
+            var selectedClosetId = $(this).val();
+            $('#clothesList').empty(); // Clear previous clothes
+            $('#selectedClothesImages').empty(); // Clear selected clothes preview
+
+            if (selectedClosetId) {
+                // Fetch clothes for the selected closet
+                
+                var clothes = {{ clothes | tojson }};
+                var selectedClothes = clothes[selectedClosetId] || [];
+                selectedClothes.forEach(function(clothing) {
+                    $('#clothesList').append(
+                        '<div class="col-md-4 mb-4">' +
+                        '<div class="card">' +
+                        '<img src="{{ url_for("static", filename="uploads/clothes/") }}' + clothing.image_url + '" alt="' + clothing.name + '" class="card-img-top" style="height: 200px; object-fit: cover;">' +
+                        '<div class="card-body">' +
+                        '<p class="card-text">' + clothing.category + ' - ' + clothing.material + '</p>' +
+                        '<input type="checkbox" name="selected_clothes" value="' + clothing.id + '" class="clothing-checkbox"> Select' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                });
+                $('#clothesSelection').show(); // Show clothes selection
+            } else {
+                $('#clothesSelection').hide(); // Hide clothes selection if no closet is selected
+            }
+        });
+
+        // Update selected clothes preview
+        $(document).on('change', '.clothing-checkbox', function() {
+            $('#selectedClothesImages').empty(); // Clear previous selected images
+            $('.clothing-checkbox:checked').each(function() {
+                var clothId = $(this).val();
+                var selectedCloth = {{ clothes | tojson }}[$('#closetSelect').val()].find(c => c.id == clothId);
+                if (selectedCloth) {
+                    $('#selectedClothesImages').append(
+                        '<div class="col-md-4 mb-4">' +
+                        '<img src="{{ url_for("static", filename="uploads/clothes/") }}' + selectedCloth.image_url + '" alt="' + selectedCloth.name + '" style="width: 100%; height: auto; margin-bottom: 10px;">' +
+                        '</div>'
+                    );
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

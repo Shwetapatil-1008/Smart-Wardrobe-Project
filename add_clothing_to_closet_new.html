@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Clothing to Closet</title>
+</head>
+<body>
+    <h1>Add New Clothing to Closet</h1>
+    <form method="POST">
+        <label for="name">Clothing Name:</label>
+        <input type="text" name="name" required>
+        <br>
+        <label for="category">Category:</label>
+        <input type="text" name="category" required>
+        <br>
+        <label for="season">Season:</label>
+        <input type="text" name="season" required>
+        <br>
+        <label for="occasions">Occasions:</label>
+        <input type="text" name="occasions" required>
+        <br>
+        <label for="color">Color:</label>
+        <input type="text" name="color" required>
+        <br>
+        <label for="brand">Brand:</label>
+        <input type="text" name="brand" required>
+        <br>
+        <label for="material">Material:</label>
+        <input type="text" name="material" required>
+        <br>
+        <label for="purchase_info">Purchase Info:</label>
+        <input type="text" name="purchase_info" required>
+        <br>
+        <label for="image_url">Image URL:</label>
+        <input type="text" name="image_url" required>
+        <br>
+        <button type="submit">Add Clothing</button>
+    </form>
+    <a href="/manage_closet/{{ closet_id }}">Back to Manage Closet</a>
+</body>
+</html>
