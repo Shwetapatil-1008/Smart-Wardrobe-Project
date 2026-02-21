@@ -83,7 +83,7 @@ def create_connection():
 api_key = os.getenv('OPENWEATHER_API_KEY')
 print(f"API Key: {api_key}")  # This will print to the console
 
-api_key = "3627ec9078b5c7ada61893c0c9e123fe"
+api_key = ""
 
 # lat = 16.7
 # lon = 74.2167
@@ -1488,3 +1488,4 @@ def contact():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
